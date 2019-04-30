@@ -23,6 +23,7 @@ import index from './routes/index';
 import payment from './routes/payment';
 import product from './routes/product';
 import search from './routes/search';
+import notifications from './routes/notifications';
 
 // enable URLs like foo.com/accessories
 import categories from '../data/categories';
@@ -38,10 +39,11 @@ router.get(categoryRoutes, category);
 router.get('/cart', cart);
 router.get('/payment', payment.get);
 router.get('/confirmation', payment.confirm);
+router.get('/notifications', notifications.get);
 router.get(/\/(index.html)?$/, index);
 router.get('/:id', product.get);
 router.get('/search/:query', search.get);
-
+router.post('/notifications', notifications.update);
 router.post('/:id/cart', product.addToCart);
 router.post('/payment', payment.pay);
 

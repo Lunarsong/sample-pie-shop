@@ -31,6 +31,7 @@ function category(req, res) {
     scripts: [
       '/js/category_main.js',
     ],
+    subscription: req.session.subscription,
     title: `PWA Shop: ${thisCategory}`,
   });
 }

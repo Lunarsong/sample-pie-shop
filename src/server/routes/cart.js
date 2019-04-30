@@ -27,6 +27,7 @@ const cart = (req, res, next) => {
     scripts: [
       '/js/cart_main.js',
     ],
+    subscription: req.session.subscription,
     title: 'PWA Shop: Cart',
   });
 };

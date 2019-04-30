@@ -31,6 +31,7 @@ function index(req, res) {
     scripts: [
       '/js/home_main.js',
     ],
+    subscription: req.session.subscription,
     title: 'PWA Shop',
   });
 }

@@ -16,7 +16,7 @@ import fei from 'firestore-export-import';
 import fs from 'fs';
 
 const DEFAULT_CONFIG_FILE = '../src/data/firebase-admin-key.json';
-const DATABASE_URL = 'https://pie-shop-app.firebaseio.com';
+const DATABASE_URL = 'https://sample-pie-shop-klj.firebaseio.com';
 
 export default function initializeApp() {
   if (process.env.FB_KEYS) {

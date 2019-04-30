@@ -1,0 +1,34 @@
+<form action="/notifications" method="post">
+  <p>Send push notifications for:</p>
+  <div class="notification-type"> 
+    <input 
+      id="notifydeals" 
+      name="notifydeals" 
+      type="checkbox"
+      {{#if subscription.options.notifydeals}}checked{{else}}{{/if}}>
+    <label for="notifydeals">Special deals</label>
+  </div>
+  <div class="notification-type"> 
+    <input 
+      id="notifyorders" 
+      name="notifyorders" 
+      type="checkbox"
+      {{#if subscription.options.notifyorders}}checked{{else}}{{/if}}>
+    <label for="notifyorders">Shipping and orders</label>
+  </div>
+  <div class="notification-type"> 
+    <input 
+      id="notifyproducts" 
+      name="notifyproducts" 
+      type="checkbox"
+      {{#if subscription.options.notifyproducts}}checked{{else}}{{/if}}>
+    <label for="notifyproducts">Product updates</label>
+  </div>
+  <div>
+    <button 
+      id="update" 
+      name="update" 
+      type="submit" 
+      value="submit">Update Subscription</button>
+  </div>
+</form>

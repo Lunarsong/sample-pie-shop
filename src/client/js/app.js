@@ -27,6 +27,7 @@ import '../styles/header.css';
 import '../styles/menu.css';
 import '../styles/product.css';
 import '../styles/search.css';
+import '../styles/notifications.css';
 import '../styles/shipping-and-payment.css';
 
 import {instance as router} from './router';

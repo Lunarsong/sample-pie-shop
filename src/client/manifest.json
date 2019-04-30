@@ -9,7 +9,7 @@
     },
     {
       "src": "images/icons/shop-icon-192.png",
-      "sizes": "192x192",
+      "sizes": "125x145",
       "type": "image/png"
     },
     {
@@ -26,5 +26,6 @@
   "start_url": "/",
   "background_color": "#5d666f",
   "display": "standalone",
-  "theme_color": "#5d666f"
+  "theme_color": "#5d666f",
+  "gcm_sender_id": "103953800507"
 }

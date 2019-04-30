@@ -46,6 +46,7 @@ function _displayResults(req, res, results) {
       '/js/search_main.js',
     ],
     results: results,
+    subscription: req.session.subscription,
     title: `PWA Shop: Search '${req.params.query}'`,
   });
 }

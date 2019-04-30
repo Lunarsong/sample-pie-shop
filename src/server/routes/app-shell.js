@@ -28,6 +28,7 @@ function index(req, res) {
     scripts: [
       '/js/app_main.js',
     ],
+    subscription: req.session.subscription,
     title: 'Shop',
   });
 }

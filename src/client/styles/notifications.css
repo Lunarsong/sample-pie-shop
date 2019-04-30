@@ -1,0 +1,112 @@
+
+#notifications {
+  display: grid;
+  grid-gap: 30px 30px;
+  grid-template-columns: 1fr;
+  margin: 30px 28px 30px 28px;
+}
+
+.container {
+  box-shadow:
+    0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  padding: 30px;
+  background-color: var(--color-background-light);
+  display: grid;
+  grid-gap: 30px 30px;
+  grid-template-columns: 1fr;
+}
+
+div ul {
+  margin: 0px;
+}
+
+.notification-type {
+  margin: 20px 20px 20px 20px;  
+}
+
+.statusmessage {
+  
+}
+
+button {
+  width: 100%;
+}
+
+button[disabled] {
+  color: var(--color-text-subtle);
+  cursor: default;
+}
+
+#notifications .container svg {
+  display: inline-block;
+  fill: var(--color-secondary);
+  height: 20px;
+  position: relative;
+  top: 4px;
+  width: 20px;
+}
+
+p.option {
+  display: inline-block;
+  font-weight: 200;
+  margin: 0 0 10px 0;
+}
+
+/* 
+#notifications form {
+  align-items: center;
+  box-shadow:
+    0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-align: center;
+  background-color: var(--color-background-light);
+}
+*/
+
+#notifications em {
+  font-style: inherit;
+  font-weight: 300;
+}
+
+#notifications h1 {
+  font-size: 24px;
+  font-weight: 200;
+}
+
+#notifications div h2 {
+  padding: 0 10px;
+}
+
+label {
+  font-weight: 300;
+}
+
+@media all and (min-width: 420px) {
+  
+  /* #notifications {
+    grid-template-columns: 1fr 1fr;
+  }
+  */
+}
+
+@media all and (min-width: 750px) {
+  /* 
+  #notifications {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  */
+}
+
+@media all and (min-width: 1200px) {
+  
+  /* 
+  #notifications {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  */
+}
+
