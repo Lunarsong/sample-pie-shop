@@ -48,54 +48,177 @@ async function checkRegistration() {
   return registration;
 }
 
-function userWantsNotifications() {
-  let notifydeals = document.querySelector('#notifydeals');
-  let notifyorders = document.querySelector('#notifyorders');
-  let notifyproducts = document.querySelector('#notifyproducts');  
-
-  if (notifydeals.checked || notifyorders.checked || notifyproducts.checked ) {
-    return true;
-  } else return false;
+async function checkSubscription(registration) {
+  let subscription = false;
+  if (registration) {
+    subscription = await registration.pushManager.getSubscription()
+    .catch(error => {
+      console.log(error);
+      return false;
+    });
+  }
+  if (subscription) {
+    setCookie('endpoint', subscription.endpoint);
+  } else {
+    deleteCookie('endpoint');
+  }
+  return subscription;
 }
 
-async function updatePushSettings(registration) {
-  if (userWantsNotifications()) {
-    let result = await Notification.requestPermission();
-    if (result === 'granted') {
-      let subscription = await registration.pushManager.subscribe({
-        'applicationServerKey': urlB64ToUint8Array(PUBLIC_VAPID_KEY),
-        'userVisibleOnly': true
-      });
-    } else if(result === 'denied') {
-      console.log('denied');
+function setCookie(cookieName, cookieValue) {
+  document.cookie = `${cookieName}=${cookieValue}`;
+}
+
+function getCookie(cookieName) {  
+  let cookieValue = '';
+  let cookiesAsArray = document.cookie.split(';');
+
+  cookiesAsArray.map(cookie => {
+    cookie = cookie.trim();
+    if (cookie.startsWith(cookieName)) {
+      cookieValue = cookie.split('=')[1];
     }
+  });
+  return cookieValue;
+}
+
+function deleteCookie(cookieName) {
+  document.cookie = `${cookieName}=`;
+}
+
+function getPreferences() {
+  let notifydeals = document.querySelector('#notifydeals').checked;
+  let notifyorders = document.querySelector('#notifyorders').checked;
+  let notifyproducts = document.querySelector('#notifyproducts').checked;  
+
+  let preferences = { 
+    notifydeals: notifydeals,
+    notifyorders: notifyorders,
+    notifyproducts: notifyproducts
+  };
+  return preferences;
+}
+
+async function subscribeToPush(registration) {
+  await registration.pushManager.subscribe({
+    'applicationServerKey': urlB64ToUint8Array(PUBLIC_VAPID_KEY),
+    'userVisibleOnly': true
+  }).catch(error => {
+    console.log(error);
+    return false;
+  });
+  return await checkSubscription(registration);
+}
+
+function sendDataToSW(data) {
+  console.log(data);
+  if (navigator.serviceWorker.controller) { 
+    navigator.serviceWorker.controller.postMessage(data); 
   } else {
-    console.log('User does not want notifications');
+    console.log('No navigator.serviceworker.controller');
   }
 }
 
-function initializeNotificationsPage() {
-  console.log('Initializing page');
-  pageInit();
-  window.addEventListener('unsubscribe', async () => {
-    let registration = await navigator.serviceWorker.getRegistration();
-    let subscription = await registration.pushManager.getSubscription();
-    if(subscription) {
-      subscription.unsubscribe();
-    }
-  });
-  
-  checkRegistration().then(registration => {
-    updatePushSettings(registration);
-  });
+function getDataFromSW() {
+  return {};
+}
 
+async function pageSetup(subscription, preferences) {
+
+  let togglepush = document.querySelector('#togglepush');
+  let preferencesform = document.querySelector('#preferences');
+  let updatebutton = document.querySelector('#update');
+  let notifydeals = document.querySelector('#notifydeals');
+  let notifyorders = document.querySelector('#notifyorders');
+  let notifyproducts = document.querySelector('#notifyproducts'); 
+  
+  notifydeals.checked = preferences.notifydeals;
+  notifyproducts.checked = preferences.notifyproducts;
+  notifyorders.checked = preferences.notifyorders;
+
+  if(subscription) {
+    togglepush.checked = true;
+    preferencesform.classList = '';
+    updatebutton.disabled = false;
+    notifydeals.disabled = false;
+    notifyproducts.disabled = false;
+    notifyorders.disabled = false;
+  } else {
+    togglepush.checked = false;
+    preferencesform.classList = 'nopush';
+    updatebutton.disabled = true;
+    notifydeals.disabled = true;
+    notifyproducts.disabled = true;
+    notifyorders.disabled = true;
+  }
+}
+
+async function initializeNotificationsPage() {
+  pageInit();
+
+  let preferences = { 
+    notifydeals: true,
+    notifyorders: true,
+    notifyproducts: true
+  };
+  
+  window.addEventListener('push-change', handlePushChange);
+  window.addEventListener('data-update', handleDataUpdate);
+  
+  let registration = await checkRegistration();
+  let subscription = await checkSubscription(registration);  
+
+  if (registration) {
+    if (subscription) {
+      setCookie('endpoint', subscription.endpoint);
+      if (getCookie('preferences')) {
+        preferences = JSON.parse(getCookie('preferences'));
+      }
+    }
+  } 
+
+  setCookie('preferences', JSON.stringify(preferences));
+  pageSetup(subscription, preferences);
+  sendDataToSW({ preferences: preferences });
+}
+
+async function handlePushChange() {
+  let userWantsPush = document.querySelector('#togglepush').checked;
+  let registration = await checkRegistration();
+  let subscription = await checkSubscription(registration);
+  let preferences = getPreferences();
+
+  if (subscription && userWantsPush) {
+    //console.log(subscription.endpoint);
+  }
+
+  if (subscription && !userWantsPush) {
+    await subscription.unsubscribe().catch(error => {
+      console.log(error);
+      return false;
+    });
+    checkSubscription(registration);
+  }
+
+  if ((!subscription) && userWantsPush) {
+    await subscribeToPush(registration);
+  }
+  
+  if ((!subscription) && (!userWantsPush)) {
+    //console.log('No subscription and user does not want one. Nothing to do.');
+  }
+  pageSetup(subscription, preferences);
+}
+
+async function handleDataUpdate(event) {
+  console.log('handling data update');
+  console.log(event.detail.data);
 }
 
 
 
 function testNotifications() {
   window.addEventListener('notifications-test', async () => {
-    let registration = await navigator.serviceWorker.getRegistration();
     let randy = Math.floor( Math.random() * 100);
     let title = 'Title of Test-' + randy;
     let options = {
@@ -104,11 +227,12 @@ function testNotifications() {
       icon: '../images/icons/logo24.svg',
       image: '../images/icons/logo24.svg',
       tag: 'Test-' + randy,
-      data: randy < 33 ? 'products' : randy < 66 ? 'deals' : 'orders'
+      data: randy < 33 ? 'notifyproducts' : randy < 66 ? 'notifydeals' : 'notifyorders'
     }
-    console.log(title, options.data);
-    if(options.data === 'products')
-    { registration.showNotification(title, options); }
+
+    navigator.serviceWorker.dispatchEvent(new Event('push', { 
+      title: title, options: options
+    })); 
   });
 }
 

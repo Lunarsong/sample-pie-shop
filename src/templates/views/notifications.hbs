@@ -1,23 +1,12 @@
 <main id="notifications">
   <h1>notifications</h1>
 
-  {{#if subscription.statusmessage }}
   <div class="container">
-    {{> notifications-statusmessage }}
-  </div>
-  {{else}}
-  {{/if}}
-
-  <div class="container">
-    {{> notifications-settings }}
+    {{> notifications-push }}
   </div>
 
   <div class="container">
-    {{> notifications-unsubscribe }}
+    {{> notifications-preferences }}
   </div>
 
-  {{#if subscription.subscribed}}
-  <div hidden id="wantsnotifications"></div>
-  {{else}}
-  {{/if}}
 </main>

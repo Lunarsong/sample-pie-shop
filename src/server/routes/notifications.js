@@ -21,49 +21,23 @@ import categories from '../../data/categories';
 
 const notifications = {
   update: (req, res) => {
-    let statusmessage = '';
-    let subscribed = false;
-    let options = {};
-    
-    if (req.body.unsubscribe) {
-      statusmessage = 'Ok! Unsubscribed.';
-      subscribed = false;
-      options = {
-        notifydeals: false,
-        notifyproducts: false,
-        notifyorders: false,
-      };
-    } else {
-      options = {
-        notifydeals: req.body.notifydeals ? true : false,
-        notifyproducts: req.body.notifyproducts ? true : false,
-        notifyorders: req.body.notifyorders ? true : false,
-      };
+    let preferences = {
+      notifydeals: req.body.notifydeals ? true : false,
+      notifyproducts: req.body.notifyproducts ? true : false,
+      notifyorders: req.body.notifyorders ? true : false,
+    };
+    req.session.subscription = Object.assign({}, req.session.subscription, {
+      preferences: preferences
+    });
+    res.redirect('/notifications');
+  },
 
-      subscribed = 
-        req.body.notifydeals || 
-        req.body.notifyproducts || 
-        req.body.notifyorders;
-
-      if (subscribed) {
-        statusmessage = 'You\'re subscribed to notifications about: ';
-      } else {
-        statusmessage = 'You\'re not subscribed to any notifications.';
-      }
-    }
-    
-    req.session.subscription = Object.assign({}, { 
-      subscribed: subscribed, 
-      options: options,
-      statusmessage: statusmessage
+  get: (req, res) => {    
+    req.session.subscription = Object.assign({}, req.session.subscription, {
+      endpoint: req.cookies.endpoint
     });
 
     console.log(req.session.subscription);
-
-    res.redirect('/notifications');
-  },
-  get: (req, res) => {
-    console.log('get');
 
     res.render('notifications', { 
       cart: req.session.cart,

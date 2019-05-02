@@ -19,9 +19,33 @@
 
 // Empty service worker for development.
 
+let data = { 'sploop': 'hi'};
+
+/* 
+self.addEventListener('message', (event) => {
+  preferences = Object.assign({}, preferences, event.data);
+  console.log(preferences);
+});
+*/
+
+self.addEventListener('message', (event) => {
+  data = Object.assign({}, data, event.data);
+  console.log(data);
+});
+
+/* 
+self.addEventListener('update-notification-prefs', (event) => {
+  prefs = Object.assign({}, prefs, event.detail);
+});
 
 self.addEventListener('push', (event) => {
-  console.log(event.detail);
+  let title = event.detail.title;
+  let options = event.detail.options;
+  let type = event.detail.options.data;
+
+  if (prefs[type]) {
+    self.registration.showNotification(title, options);
+  } 
 });
 
 /* 

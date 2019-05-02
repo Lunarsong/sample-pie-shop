@@ -1,0 +1,14 @@
+<div>
+  <p>Enable push</p>
+  <label class="switch">
+    <input id="togglepush"
+      type="checkbox"
+      onclick="window.dispatchEvent(new Event('push-change'));"
+      {{#if subscription.endpoint}}
+      checked="true"
+      {{else}}
+      {{/if}}>
+    <span class="slider round"></span>
+  </label>
+
+</div>

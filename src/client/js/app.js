@@ -47,8 +47,8 @@ export default function initApp() {
       navigator.serviceWorker.register('/sw.js');
     }
   });
-
-
+  
+  
   // Enable service worker.
   if ('serviceWorker' in navigator) {
     // Use the window load event to keep the page load performant
